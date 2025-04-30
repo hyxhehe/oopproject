@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Home API Interface</title>
+</head>
+
+<body>
+    <h1>Smart Home API</h1>
+    <p>Welcome to the Smart Home API. Click the buttons below to access different endpoints:</p>
+    <!-- 获取所有设备信息按钮 -->
+    <button onclick="window.location.href='/devices'">Get All Devices</button>
+    <!-- 获取单个设备信息按钮，这里假设你后续会在前端处理传入具体device_id，暂时写死一个示例id -->
+    <button onclick="window.location.href='/devices/device123'">Get a Specific Device</button>
+    <!-- 添加设备按钮 -->
+    <button onclick="window.location.href='/devices'">Add a Device</button>
+    <!-- 删除设备按钮，同样假设示例id -->
+    <button onclick="window.location.href='/devices/device123'">Remove a Device</button>
+    <!-- 执行设备命令按钮，假设示例id和命令 -->
+    <button onclick="window.location.href='/devices/device123/on'">Execute Command on Device</button>
+    <!-- 获取总能耗按钮 -->
+    <button onclick="window.location.href='/energy_usage'">Get Total Energy Usage</button>
+</body>
+
+</html>

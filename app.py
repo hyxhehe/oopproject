@@ -1,4 +1,5 @@
-from flask import Flask
+from flask import Flask,jsonify, request
+from flask import render_template
 import sqlite3
 app = Flask(__name__)
 
@@ -6,6 +7,9 @@ import abc
 from datetime import datetime
 from collections import defaultdict
 
+from flask import Flask
+from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy import text
 
 # Base Device Class (Template)
 class Device(abc.ABC):
@@ -231,37 +235,82 @@ class SmartHomeHub:
             return sum(device.get_energy_usage() for device in self.controller.devices.values())
 
 
-# Main Execution (Template)
-if __name__ == "__main__":
-    hub = SmartHomeHub()
+hub = SmartHomeHub()
 
-    # Add devices
-    # create light, thermostat, and camera devices
-    light = Light("L1", "Living Room Light")
-    thermostat = Thermostat("T1", "Home Thermostat")
-    camera = Camera("C1", "Front Door Camera")
 
-    # Display devices
-    hub.display_status()
+HOSTNAME = "127.0.0.1"
 
-    # Execute commands
-    # Execute 'on' commands for the light
-    hub.controller.execute_command("L1", "on")
-    # Execute off commands for thermostat
-    hub.controller.execute_command("T1", "off")
+PORT = 3306
 
-    # Schedule tasks
-    # Get the current time
-    time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    hub.schedule_task("C1", "on", time)
+USERNAME = "root"
 
-    # Calculate and print total energy usage
-    print(f"Total Energy Usage: {hub.total_energy_usage()} kWh")
+PASSWORD = "123456"
+
+DATABASE = "device"
+
+app.config['SQLALCHEMY_DATABASE_URI'] = f"mysql+pymysql://{USERNAME}:{PASSWORD}@{HOSTNAME}:{PORT}/{DATABASE}?charset=utf8mb4"
+
+db = SQLAlchemy(app)
+with app.app_context():
+    with db.engine.connect() as conn:
+        rs = conn.execute(text("select 1"))
+        print(rs.fetchone())
+
 
 @app.route('/')
-def hello_world():  # put application's code here
-    return 'Hello World!'
+def index():
+    return render_template('index.html')
+
+# 下面是API endpoint
+@app.route('/devices', methods=['GET']) #get表得到用户想得到数据
+def get_devices():
+    devices = hub.controller.list_devices()
+    return jsonify(devices) #调用函数得到数据再以json格式返回
+
+@app.route('/devices/<device_id>', methods=['GET'])
+def get_device(device_id):
+    device = hub.controller.get_device(device_id)
+    if device:
+        return jsonify(device.to_dict())
+    return jsonify({"error": "Device not found"}), 404
+
+@app.route('/devices', methods=['POST'])
+def add_device():
+    data = request.get_json()
+    device_type = data.get('type')
+    device_id = data.get('id')
+    name = data.get('name')
+    if device_type == "Light":
+        brightness = data.get('brightness', 100)
+        device = Light(device_id, name, brightness)
+    elif device_type == "Thermostat":
+        temperature = data.get('temperature', 22)
+        device = Thermostat(device_id, name, temperature)
+    elif device_type == "Camera":
+        resolution = data.get('resolution', '1080p')
+        device = Camera(device_id, name, resolution)
+    else:
+        return jsonify({"error": "Invalid device type"}), 400
+    hub.controller.add_device(device) #创建好的设备对象添加到设备管理系统中。
+    return jsonify(device.to_dict()), 201  #状态码为 201，表示已创建成功，告知客户端设备已成功添加。
+
+@app.route('/devices/<device_id>', methods=['DELETE'])
+def remove_device(device_id):
+    hub.controller.remove_device(device_id)
+    return jsonify({"message": "Device removed successfully"})
+
+@app.route('/devices/<device_id>/<command>', methods=['PUT'])
+def execute_command(device_id, command):
+    result = hub.controller.execute_command(device_id, command)
+    if "error" in result:
+        return jsonify(result), 400
+    return jsonify(result)
+
+@app.route('/energy_usage', methods=['GET'])
+def get_total_energy_usage():
+    energy_usage = hub.total_energy_usage()
+    return jsonify({"total_energy_usage": energy_usage})
 
 
 if __name__ == '__main__':
-    app.run()
+    app.run(debug = True)
