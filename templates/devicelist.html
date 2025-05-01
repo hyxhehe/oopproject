@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>设备列表</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            padding: 20px;
+        }
+
+        nav {
+            background-color: #fff;
+            padding: 10px;
+            margin-bottom: 20px;
+        }
+
+        nav a {
+            margin-right: 15px;
+            text-decoration: none;
+            color: #333;
+            padding: 6px 12px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            background-color: #f9f9f9;
+            transition: background-color 0.3s ease;
+        }
+
+        nav a:hover {
+            background-color: #eaeaea;
+        }
+
+        h1 {
+            color: #333;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        table,
+        th,
+        td {
+            border: 1px solid #ccc;
+        }
+
+        th,
+        td {
+            padding: 8px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+
+<body>
+    <nav>
+        <h1>智能家居系统</h1>
+        <a href="index.html">首页</a>
+        <a href="energy_statistics.html">能耗统计</a>
+        <a href="add_device.html">+ 添加设备</a>
+        <a href="delete_device.html">- 删除设备</a>
+        <a href="devicelist.html">≡ 获取设备列表</a>
+        <a href="get_single_device.html">i 获取单个设备</a>
+        <a href="execute_command.html">▶ 执行命令</a>
+        <a href="energy_usage.html">⏱ 获取能耗统计</a>
+    </nav>
+    <h2>设备列表</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Device</th>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Type</th>
+                <th>Status</th>
+                <th>Energy Usage</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- 这里假设设备列表数据从后端获取并通过Flask模板语法填充 -->
+            {% for device in devices %}
+            <tr>
+                <td>{{ device.id }}</td>
+                <td>{{ device.id }}</td>
+                <td>{{ device.name }}</td>
+                <td>{{ device.type }}</td>
+                <td>{{ device.status }}</td>
+                <td>{{ device.energy_usage }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+
+</html>
