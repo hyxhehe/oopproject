@@ -38,12 +38,27 @@
         th {
             background-color: #f2f2f2;
         }
+
+        .loading {
+            text-align: center;
+            font-size: 1.2rem;
+            color: #777;
+            margin-top: 20px;
+        }
+
+        .error {
+            text-align: center;
+            font-size: 1.2rem;
+            color: red;
+            margin-top: 20px;
+        }
     </style>
 </head>
 
 <body>
     <h1>Device Information</h1>
-    <table id="deviceTable">
+    <div class="loading" id="loading">Loading device information...</div>
+    <table id="deviceTable" style="display: none;">
         <thead>
             <tr>
                 <th>Device</th>
@@ -62,6 +77,9 @@
         const urlParams = new URLSearchParams(window.location.search);
         const deviceId = urlParams.get('device_id');
 
+        const loadingElement = document.getElementById('loading');
+        const tableElement = document.getElementById('deviceTable');
+
         // 发送GET请求获取设备信息
         fetch(`/devices/${deviceId}`)
            .then(response => {
@@ -71,6 +89,8 @@
                 throw new Error('Failed to fetch device data');
             })
            .then(data => {
+                loadingElement.style.display = 'none';
+                tableElement.style.display = 'table';
                 const tableBody = document.getElementById('deviceTable').getElementsByTagName('tbody')[0];
                 const row = tableBody.insertRow();
                 row.insertCell(0).textContent = 'Device';
@@ -80,8 +100,8 @@
                 row.insertCell(4).textContent = data.energy_usage || 'N/A';
             })
            .catch(error => {
-                console.error(error);
-                document.body.innerHTML = `<h1>Error</h1><p>${error.message}</p>`;
+                loadingElement.style.display = 'none';
+                document.body.innerHTML = `<div class="error">Error: ${error.message}</div>`;
             });
     </script>
 </body>

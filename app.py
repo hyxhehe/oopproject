@@ -146,7 +146,6 @@ class DeviceController:
 
     def _save_devices(self):
         try:
-            # 先清空表
             DeviceModel.query.delete()
             for device in self.devices.values():
                 device_type = type(device).__name__
@@ -223,11 +222,22 @@ class SmartHomeHub:
 
 
 hub = SmartHomeHub()
-
-
 @app.route('/')
 def index():
     return render_template('index.html')
+
+@app.route('/add_device', methods=['GET'])
+def add_device_page():
+    return render_template('add_advice.html')
+
+@app.route('/remove_device', methods=['GET'])
+def remove_device_input():
+    return render_template('remove_device.html')
+
+@app.route('/confirm_remove_device', methods=['GET'])
+def confirm_remove_device():
+    # 这里编写处理确认删除设备的逻辑，例如获取设备信息展示给用户确认等
+    return "Confirm remove device page"  # 这里先简单返回，后续根据实际逻辑修改
 
 @app.route('/devices', methods=['GET'])
 def get_devicelist():

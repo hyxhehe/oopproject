@@ -9,7 +9,7 @@
     <title>Smart Home API Interface</title>
     <style>
         /* 艺术字样式 */
-        .artistic-text {
+       .artistic-text {
             font-family: 'Pacifico', cursive;
             background: linear-gradient(to right, #ff8a00, #da1b60);
             -webkit-background-clip: text;
@@ -20,22 +20,65 @@
         }
 
         /* 渐变按钮样式 */
-        .gradient-button {
+       .gradient-button {
             background: linear-gradient(to right, #4e54c8, #8f94fb);
             color: white;
             transition: background 0.3s ease;
             padding: 0.5rem 1rem;
             border-radius: 0.25rem;
             margin: 0.5rem;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
 
-        .gradient-button:hover {
+       .gradient-button:hover {
             background: linear-gradient(to right, #8f94fb, #4e54c8);
+            transform: scale(1.05);
+        }
+
+       .gradient-button:active {
+            transform: scale(0.95);
+        }
+
+        form {
+            background-color: white;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+            width: 400px;
+            margin: 0 auto;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        input,
+        select {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 3px;
+        }
+
+        button {
+            background-color: #007BFF;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #0056b3;
         }
     </style>
 </head>
 
-<body class="bg-gray-100 p-8">
+<body>
     <h1 class="artistic-text">Smart Home API</h1>
     <p class="text-center">Welcome to the Smart Home API. Click the buttons below to access different endpoints:</p>
 
@@ -46,10 +89,10 @@
     <button id="getSpecificDeviceBtn" class="gradient-button">Get a Specific Device</button>
 
     <!-- 添加设备按钮 -->
-    <button class="gradient-button" onclick="window.location.href='/devices'">Add a Device</button>
+    <button class="gradient-button" onclick="window.location.href='/add_device'">Add a Device</button>
 
     <!-- 删除设备按钮 -->
-    <button class="gradient-button" onclick="window.location.href='/devices/device123'">Remove a Device</button>
+    <button class="gradient-button" onclick="openRemoveDeviceDialog()">Remove a Device</button>
 
     <!-- 获取总能耗按钮 -->
     <button class="gradient-button" onclick="window.location.href='/energy_usage'">Get Total Energy Usage</button>
@@ -58,11 +101,18 @@
         // 获取特定设备按钮事件处理
         const getSpecificDeviceBtn = document.getElementById('getSpecificDeviceBtn');
         getSpecificDeviceBtn.addEventListener('click', function () {
-            const deviceId = prompt('请输入你要查看信息的设备 ID');
+            const deviceId = prompt('Please enter the ID of the device you want to view information for:');
             if (deviceId!== null) {
                 window.location.href = `/devices/${deviceId}`;
             }
         });
+
+        function openRemoveDeviceDialog() {
+            const deviceId = prompt('Please enter the ID of the device you want to remove:');
+            if (deviceId!== null) {
+                window.location.href = '/remove_device';
+            }
+        }
     </script>
 </body>
 

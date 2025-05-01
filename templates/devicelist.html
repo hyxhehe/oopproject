@@ -16,25 +16,12 @@
             background-color: #fff;
             padding: 10px;
             margin-bottom: 20px;
-        }
-
-        nav a {
-            margin-right: 15px;
-            text-decoration: none;
-            color: #333;
-            padding: 6px 12px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            background-color: #f9f9f9;
-            transition: background-color 0.3s ease;
-        }
-
-        nav a:hover {
-            background-color: #eaeaea;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
 
         h1 {
             color: #333;
+            margin: 0;
         }
 
         table {
@@ -57,20 +44,19 @@
         th {
             background-color: #f2f2f2;
         }
+
+        input[type="text"] {
+            padding: 6px 12px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
     </style>
 </head>
 
 <body>
     <nav>
         <h1>智能家居系统</h1>
-        <a href="index.html">首页</a>
-        <a href="energy_statistics.html">能耗统计</a>
-        <a href="add_device.html">+ 添加设备</a>
-        <a href="delete_device.html">- 删除设备</a>
-        <a href="devicelist.html">≡ 获取设备列表</a>
-        <a href="get_single_device.html">i 获取单个设备</a>
-        <a href="execute_command.html">▶ 执行命令</a>
-        <a href="energy_usage.html">⏱ 获取能耗统计</a>
+        <input type="text" id="searchInput" placeholder="Search devices...">
     </nav>
     <h2>设备列表</h2>
     <table>
@@ -98,6 +84,22 @@
             {% endfor %}
         </tbody>
     </table>
+
+    <script>
+        const searchInput = document.getElementById('searchInput');
+        searchInput.addEventListener('input', function () {
+            const searchTerm = this.value.toLowerCase();
+            const rows = document.querySelectorAll('table tbody tr');
+            rows.forEach(row => {
+                const name = row.cells[2].textContent.toLowerCase();
+                if (name.includes(searchTerm)) {
+                    row.style.display = 'table-row';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        });
+    </script>
 </body>
 
 </html>

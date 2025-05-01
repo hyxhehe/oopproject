@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>添加设备</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background-color: #f9f9f9;
+        }
+
+        h1 {
+            color: #333;
+            text-align: center;
+        }
+
+        form {
+            background-color: white;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+            width: 400px;
+            margin: 0 auto;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        input,
+        select {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 3px;
+        }
+
+        button {
+            background-color: #007BFF;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>添加设备</h1>
+    <form id="addDeviceForm">
+        <label for="deviceType">设备类型</label>
+        <select id="deviceType">
+            <option value="Light">Light</option>
+            <option value="Thermostat">Thermostat</option>
+            <option value="Camera">Camera</option>
+        </select>
+
+        <label for="deviceId">设备ID</label>
+        <input type="text" id="deviceId" placeholder="请输入设备ID" required>
+
+        <label for="deviceName">设备名称</label>
+        <input type="text" id="deviceName" placeholder="请输入设备名称" required>
+
+        <div id="lightOptions" style="display: none;">
+            <label for="brightness">亮度</label>
+            <input type="number" id="brightness" placeholder="请输入亮度值" value="100" min="0" max="255">
+        </div>
+
+        <div id="thermostatOptions" style="display: none;">
+            <label for="temperature">温度</label>
+            <input type="number" id="temperature" placeholder="请输入温度值" value="22" min="-20" max="40">
+        </div>
+
+        <div id="cameraOptions" style="display: none;">
+            <label for="resolution">分辨率</label>
+            <input type="text" id="resolution" placeholder="请输入分辨率" value="1080p">
+        </div>
+
+        <button type="button" onclick="submitDevice()">提交</button>
+    </form>
+
+    <script>
+        document.getElementById('deviceType').addEventListener('change', function () {
+            const deviceType = this.value;
+            const lightOptions = document.getElementById('lightOptions');
+            const thermostatOptions = document.getElementById('thermostatOptions');
+            const cameraOptions = document.getElementById('cameraOptions');
+
+            lightOptions.style.display = 'none';
+            thermostatOptions.style.display = 'none';
+            cameraOptions.style.display = 'none';
+
+            if (deviceType === 'Light') {
+                lightOptions.style.display = 'block';
+            } else if (deviceType === 'Thermostat') {
+                thermostatOptions.style.display = 'block';
+            } else if (deviceType === 'Camera') {
+                cameraOptions.style.display = 'block';
+            }
+        });
+
+        function submitDevice() {
+            const deviceType = document.getElementById('deviceType').value;
+            const deviceId = document.getElementById('deviceId').value;
+            const deviceName = document.getElementById('deviceName').value;
+            if (!deviceId ||!deviceName) {
+                alert('设备ID和设备名称不能为空');
+                return;
+            }
+            let additionalParam;
+            if (deviceType === 'Light') {
+                additionalParam = document.getElementById('brightness').value;
+                if (!additionalParam) {
+                    alert('亮度值不能为空');
+                    return;
+                }
+            } else if (deviceType === 'Thermostat') {
+                additionalParam = document.getElementById('temperature').value;
+                if (!additionalParam) {
+                    alert('温度值不能为空');
+                    return;
+                }
+            } else if (deviceType === 'Camera') {
+                additionalParam = document.getElementById('resolution').value;
+                if (!additionalParam) {
+                    alert('分辨率不能为空');
+                    return;
+                }
+            }
+            const data = {
+                type: deviceType,
+                id: deviceId,
+                name: deviceName
+            };
+            if (deviceType === 'Light') {
+                data.brightness = additionalParam;
+            } else if (deviceType === 'Thermostat') {
+                data.temperature = additionalParam;
+            } else if (deviceType === 'Camera') {
+                data.resolution = additionalParam;
+            }
+
+            fetch('/devices', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            })
+               .then(response => {
+                    if (response.ok) {
+                        return response.json();
+                    }
+                    throw new Error('Failed to add device');
+                })
+               .then(result => {
+                    alert('设备添加成功');
+                    document.getElementById('addDeviceForm').reset();
+                })
+               .catch(error => {
+                    if (error.message.includes('Failed to add device')) {
+                        alert('服务器响应错误，设备添加失败');
+                    } else {
+                        alert('设备添加失败：' + error.message);
+                    }
+                });
+        }
+    </script>
+</body>
+
+</html>
