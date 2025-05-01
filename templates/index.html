@@ -38,43 +38,6 @@
        .gradient-button:active {
             transform: scale(0.95);
         }
-
-        form {
-            background-color: white;
-            padding: 20px;
-            border-radius: 5px;
-            box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
-            width: 400px;
-            margin: 0 auto;
-        }
-
-        label {
-            display: block;
-            margin-bottom: 5px;
-            font-weight: bold;
-        }
-
-        input,
-        select {
-            width: 100%;
-            padding: 8px;
-            margin-bottom: 15px;
-            border: 1px solid #ccc;
-            border-radius: 3px;
-        }
-
-        button {
-            background-color: #007BFF;
-            color: white;
-            padding: 10px 15px;
-            border: none;
-            border-radius: 3px;
-            cursor: pointer;
-        }
-
-        button:hover {
-            background-color: #0056b3;
-        }
     </style>
 </head>
 
@@ -92,7 +55,7 @@
     <button class="gradient-button" onclick="window.location.href='/add_device'">Add a Device</button>
 
     <!-- 删除设备按钮 -->
-    <button class="gradient-button" onclick="openRemoveDeviceDialog()">Remove a Device</button>
+    <button class="gradient-button" onclick="window.location.href='/remove_device'">Remove a Device</button>
 
     <!-- 获取总能耗按钮 -->
     <button class="gradient-button" onclick="window.location.href='/energy_usage'">Get Total Energy Usage</button>
@@ -106,13 +69,6 @@
                 window.location.href = `/devices/${deviceId}`;
             }
         });
-
-        function openRemoveDeviceDialog() {
-            const deviceId = prompt('Please enter the ID of the device you want to remove:');
-            if (deviceId!== null) {
-                window.location.href = '/remove_device';
-            }
-        }
     </script>
 </body>
 
