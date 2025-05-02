@@ -2,7 +2,7 @@ from flask import Flask, jsonify, request, render_template
 from flask_sqlalchemy import SQLAlchemy
 import abc
 import logging
-
+from collections import OrderedDict
 # 配置日志
 logging.basicConfig(level=logging.DEBUG)
 
@@ -236,17 +236,44 @@ def remove_device_input():
 
 @app.route('/confirm_remove_device', methods=['GET'])
 def confirm_remove_device():
-    # 这里编写处理确认删除设备的逻辑，例如获取设备信息展示给用户确认等
-    return "Confirm remove device page"  # 这里先简单返回，后续根据实际逻辑修改
+    return "Device removed successfully"
 
 @app.route('/device_control', methods=['GET'])
 def device_control_page():
     return render_template('device_status.html')
+
+
 @app.route('/devices', methods=['GET'])
 def get_devicelist():
     try:
         devices = hub.controller.list_devices()
-        return render_template('devicelist.html', devices=devices)
+        if devices:
+            result = []
+            for device in devices:
+                device_info = {
+                    "id": device["id"],
+                    "name": device["name"],
+                    "status": device["status"],
+                    "type": device["type"],
+                    "energy_usage": device["energy_usage"],
+                    "brightness": device.get("brightness", None),  # 获取亮度，若无则为None
+                    "temperature": device.get("temperature", None),  # 获取温度，若无则为None
+                    "resolution": device.get("resolution", None)  # 获取分辨率，若无则为None
+                }
+                result.append(device_info)
+            return jsonify(result)
+        else:
+            default_device = {
+                "id": "",
+                "name": "",
+                "status": "",
+                "type": "",
+                "energy_usage": 0,
+                "brightness": None,
+                "temperature": None,
+                "resolution": None
+            }
+            return jsonify([default_device]), 200
     except Exception as e:
         logging.error(f"Error getting devices: {e}")
         return jsonify({"error": "An error occurred while getting devices"}), 500
@@ -257,8 +284,29 @@ def get_device(device_id):
     try:
         device = hub.controller.get_device(device_id)
         if device:
-            return jsonify(device.to_dict())
-        return jsonify({"error": "Device not found"}), 404
+            result = {
+                "id": device.get_id(),
+                "name": device.get_name(),
+                "status": device.get_status(),
+                "energy_usage": device.get_energy_usage(),
+                "type": type(device).__name__,
+                "brightness": getattr(device, 'brightness', None),  # 处理亮度属性，若不存在则为None
+                "temperature": getattr(device, 'temperature', None),  # 处理温度属性，若不存在则为None
+                "resolution": getattr(device, 'resolution', None)  # 处理分辨率属性，若不存在则为None
+            }
+            return jsonify(result), 200
+        else:
+            default_result = {
+                "id": '0',
+                "name": '',
+                "status": '',
+                "energy_usage": 0,
+                "type": '',
+                "brightness": None,
+                "temperature": None,
+                "resolution": None
+            }
+            return jsonify(default_result), 200
     except Exception as e:
         logging.error(f"Error getting device: {e}")
         return jsonify({"error": "An error occurred while getting the device"}), 500
@@ -322,17 +370,13 @@ def get_total_energy_usage():
         if devices:
             device = devices[0]
             result = {
-                "id": device["id"],
-                "name": device["name"],
                 "energy_usage": device["energy_usage"]
             }
             return jsonify(result), 200
         else:
             # 无设备时返回符合结构的空数据
             result = {
-                "id": "",
-                "name": "",
-                "energy_usage": 0,
+                "total_energy_usage": 0,
             }
             return jsonify(result), 200
     except Exception as e:
