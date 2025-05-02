@@ -3,6 +3,7 @@ from flask_sqlalchemy import SQLAlchemy
 import abc
 import logging
 from collections import OrderedDict
+
 # 配置日志
 logging.basicConfig(level=logging.DEBUG)
 
@@ -18,7 +19,6 @@ app.config[
     'SQLALCHEMY_DATABASE_URI'] = f"mysql+pymysql://{USERNAME}:{PASSWORD}@{HOSTNAME}:{PORT}/{DATABASE}?charset=utf8mb4"
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
-
 
 # Base Device Class (Template)
 class Device(abc.ABC):
@@ -257,8 +257,8 @@ def get_devicelist():
                     "type": device["type"],
                     "energy_usage": device["energy_usage"],
                     "brightness": device.get("brightness", None),  # 获取亮度，若无则为None
-                    "temperature": device.get("temperature", None),  # 获取温度，若无则为None
-                    "resolution": device.get("resolution", None)  # 获取分辨率，若无则为None
+                    "temperature": device.get("temperature", None),
+                    "resolution": device.get("resolution", None)
                 }
                 result.append(device_info)
             return jsonify(result)
@@ -291,8 +291,8 @@ def get_device(device_id):
                 "energy_usage": device.get_energy_usage(),
                 "type": type(device).__name__,
                 "brightness": getattr(device, 'brightness', None),  # 处理亮度属性，若不存在则为None
-                "temperature": getattr(device, 'temperature', None),  # 处理温度属性，若不存在则为None
-                "resolution": getattr(device, 'resolution', None)  # 处理分辨率属性，若不存在则为None
+                "temperature": getattr(device, 'temperature', None),
+                "resolution": getattr(device, 'resolution', None)
             }
             return jsonify(result), 200
         else:
