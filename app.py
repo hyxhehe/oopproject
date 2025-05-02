@@ -239,6 +239,9 @@ def confirm_remove_device():
     # 这里编写处理确认删除设备的逻辑，例如获取设备信息展示给用户确认等
     return "Confirm remove device page"  # 这里先简单返回，后续根据实际逻辑修改
 
+@app.route('/device_control', methods=['GET'])
+def device_control_page():
+    return render_template('device_status.html')
 @app.route('/devices', methods=['GET'])
 def get_devicelist():
     try:
@@ -315,11 +318,26 @@ def execute_command(device_id, command):
 @app.route('/energy_usage', methods=['GET'])
 def get_total_energy_usage():
     try:
-        energy_usage = hub.total_energy_usage()
-        return jsonify({"total_energy_usage": energy_usage})
+        devices = hub.controller.list_devices()
+        if devices:
+            device = devices[0]
+            result = {
+                "id": device["id"],
+                "name": device["name"],
+                "energy_usage": device["energy_usage"]
+            }
+            return jsonify(result), 200
+        else:
+            # 无设备时返回符合结构的空数据
+            result = {
+                "id": "",
+                "name": "",
+                "energy_usage": 0,
+            }
+            return jsonify(result), 200
     except Exception as e:
-        logging.error(f"Error getting total energy usage: {e}")
-        return jsonify({"error": "An error occurred while getting the total energy usage"}), 500
+        logging.error(f"Error getting energy usage: {e}")
+        return jsonify({"error": "An error occurred while getting energy usage"}), 500
 
 
 if __name__ == '__main__':
