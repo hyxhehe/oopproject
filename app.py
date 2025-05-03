@@ -4,8 +4,6 @@ import abc
 import logging
 from collections import OrderedDict
 
-# 配置日志
-logging.basicConfig(level=logging.DEBUG)
 
 app = Flask(__name__)
 
