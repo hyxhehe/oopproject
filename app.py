@@ -226,11 +226,11 @@ hub = SmartHomeHub()
 def index():
     return render_template('index.html')
 
-@app.route('/add_device', methods=['GET'])
+@app.route('/add_device', methods=['GET', 'POST'])
 def add_device_page():
     return render_template('add_advice.html')
 
-@app.route('/remove_device', methods=['GET'])
+@app.route('/remove_device', methods=['GET', 'DELETE'])
 def remove_device_input():
     return render_template('remove_device.html')
 
@@ -238,7 +238,7 @@ def remove_device_input():
 def confirm_remove_device():
     return "Device removed successfully"
 
-@app.route('/device_control', methods=['GET'])
+@app.route('/device_control', methods=['GET', 'PUT'])
 def device_control_page():
     return render_template('device_status.html')
 
@@ -366,22 +366,15 @@ def execute_command(device_id, command):
 @app.route('/energy_usage', methods=['GET'])
 def get_total_energy_usage():
     try:
-        devices = hub.controller.list_devices()
-        if devices:
-            device = devices[0]
-            result = {
-                "energy_usage": device["energy_usage"]
-            }
-            return jsonify(result), 200
-        else:
-            # 无设备时返回符合结构的空数据
-            result = {
-                "total_energy_usage": 0,
-            }
-            return jsonify(result), 200
+        total_energy = hub.total_energy_usage()
+        result = {
+            "total_energy_usage": total_energy
+        }
+        return jsonify(result), 200
     except Exception as e:
         logging.error(f"Error getting energy usage: {e}")
         return jsonify({"error": "An error occurred while getting energy usage"}), 500
+
 
 
 if __name__ == '__main__':

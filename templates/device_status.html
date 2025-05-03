@@ -71,6 +71,16 @@
                     alert('An error occurred');
                 });
         }
+
+        // 添加自动刷新逻辑
+        setInterval(() => {
+            const deviceId = "{{ device_id }}";
+            fetch(`/devices/${deviceId}`)
+              .then(response => response.json())
+              .then(data => {
+                    document.getElementById('status').textContent = data.status;
+                });
+        }, 2000);  // 每2秒刷新一次状态
     </script>
 </body>
 
