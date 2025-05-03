@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Device Status</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+        }
+
+        h1 {
+            text-align: center;
+        }
+
+        table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+
+        table,
+        th,
+        td {
+            border: 1px solid #ccc;
+        }
+
+        button {
+            padding: 5px 10px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Device Status</h1>
+    <table>
+        <tr>
+            <th>Device ID</th>
+            <th>Device Name</th>
+            <th>Device Status</th>
+            <th>Action</th>
+        </tr>
+        <tr>
+            <td>{{ device_id }}</td>
+            <td>{{ device_name }}</td>
+            <td id="status">{{ status }}</td>
+            <td>
+                <button onclick="changeStatus('on')">On</button>
+                <button onclick="changeStatus('off')">Off</button>
+            </td>
+        </tr>
+    </table>
+    <script>
+        function changeStatus(newStatus) {
+            const deviceId = "{{ device_id }}";
+            fetch(`/devices/${deviceId}/${newStatus}`, {
+                method: 'PUT'
+            })
+              .then(response => response.json())
+              .then(data => {
+                    if (data.status) {
+                        document.getElementById('status').textContent = data.status;
+                    } else {
+                        alert('Failed to change status');
+                    }
+                })
+              .catch(error => {
+                    console.error('Error:', error);
+                    alert('An error occurred');
+                });
+        }
+
+        // 添加自动刷新逻辑
+        setInterval(() => {
+            const deviceId = "{{ device_id }}";
+            fetch(`/devices/${deviceId}`)
+              .then(response => response.json())
+              .then(data => {
+                    document.getElementById('status').textContent = data.status;
+                });
+        }, 2000);  // 每2秒刷新一次状态
+    </script>
+</body>
+
+</html>

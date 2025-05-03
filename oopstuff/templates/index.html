@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" rel="stylesheet">
+    <title>Smart Home API Interface</title>
+    <style>
+        /* 艺术字样式 */
+       .artistic-text {
+            font-family: 'Pacifico', cursive;
+            background: linear-gradient(to right, #ff8a00, #da1b60);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-size: 3rem;
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        /* 渐变按钮样式 */
+       .gradient-button {
+            background: linear-gradient(to right, #4e54c8, #8f94fb);
+            color: white;
+            transition: background 0.3s ease;
+            padding: 0.5rem 1rem;
+            border-radius: 0.25rem;
+            margin: 0.5rem;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+       .gradient-button:hover {
+            background: linear-gradient(to right, #8f94fb, #4e54c8);
+            transform: scale(1.05);
+        }
+
+       .gradient-button:active {
+            transform: scale(0.95);
+        }
+    </style>
+</head>
+
+<body>
+    <h1 class="artistic-text">Smart Home API</h1>
+    <p class="text-center">Welcome to the Smart Home API. Click the buttons below to access different endpoints:</p>
+
+    <!-- 获取所有设备信息按钮 -->
+    <button class="gradient-button" onclick="window.location.href='/devices'">Get All Devices</button>
+
+    <!-- 获取单个设备信息按钮 -->
+    <button id="getSpecificDeviceBtn" class="gradient-button">Get a Specific Device</button>
+
+    <!-- 添加设备按钮 -->
+    <button class="gradient-button" onclick="window.location.href='/add_device'">Add a Device</button>
+
+    <!-- 删除设备按钮 -->
+    <button class="gradient-button" onclick="window.location.href='/remove_device'">Remove a Device</button>
+
+    <!-- 获取总能耗按钮 -->
+    <button class="gradient-button" onclick="window.location.href='/energy_usage'">Get Total Energy Usage</button>
+
+    <!-- 新增按钮，这里假设跳转到设备控制页面，你可按需修改 -->
+    <button class="gradient-button" onclick="window.location.href='/device_control'">Device Control</button>
+
+    <script>
+        // 获取特定设备按钮事件处理
+        const getSpecificDeviceBtn = document.getElementById('getSpecificDeviceBtn');
+        getSpecificDeviceBtn.addEventListener('click', function () {
+            const deviceId = prompt('Please enter the ID of the device you want to view information for:');
+            if (deviceId!== null) {
+                window.location.href = `/devices/${deviceId}`;
+            }
+        });
+    </script>
+</body>
+
+</html>

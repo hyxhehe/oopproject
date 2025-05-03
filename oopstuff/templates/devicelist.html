@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>设备列表</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            padding: 20px;
+        }
+
+        nav {
+            background-color: #fff;
+            padding: 10px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            color: #333;
+            margin: 0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        table,
+        th,
+        td {
+            border: 1px solid #ccc;
+        }
+
+        th,
+        td {
+            padding: 8px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+
+        input[type="text"] {
+            padding: 6px 12px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+
+<body>
+    <nav>
+        <h1>智能家居系统</h1>
+        <input type="text" id="searchInput" placeholder="Search devices...">
+    </nav>
+    <h2>设备列表</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Device</th>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Type</th>
+                <th>Status</th>
+                <th>Energy Usage</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- 这里假设设备列表数据从后端获取并通过Flask模板语法填充 -->
+            {% for device in devices %}
+            <tr>
+                <td>{{ device.id }}</td>
+                <td>{{ device.id }}</td>
+                <td>{{ device.name }}</td>
+                <td>{{ device.type }}</td>
+                <td>{{ device.status }}</td>
+                <td>{{ device.energy_usage }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <script>
+        const searchInput = document.getElementById('searchInput');
+        searchInput.addEventListener('input', function () {
+            const searchTerm = this.value.toLowerCase();
+            const rows = document.querySelectorAll('table tbody tr');
+            rows.forEach(row => {
+                const name = row.cells[2].textContent.toLowerCase();
+                if (name.includes(searchTerm)) {
+                    row.style.display = 'table-row';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        });
+    </script>
+</body>
+
+</html>
