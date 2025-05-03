@@ -226,6 +226,10 @@ hub = SmartHomeHub()
 def index():
     return render_template('index.html')
 
+@app.route('/devices')
+def devicespage():
+    return render_template('devicelist.html')
+
 @app.route('/add_device', methods=['GET', 'POST'])
 def add_device_page():
     return render_template('add_advice.html')
@@ -243,7 +247,8 @@ def device_control_page():
     return render_template('device_status.html')
 
 
-@app.route('/devices', methods=['GET'])
+
+@app.route('/devices', methods=['GET']) #获取设备列表
 def get_devicelist():
     try:
         devices = hub.controller.list_devices()
@@ -279,7 +284,7 @@ def get_devicelist():
         return jsonify({"error": "An error occurred while getting devices"}), 500
 
 
-@app.route('/devices/<device_id>', methods=['GET'])
+@app.route('/devices/<device_id>', methods=['GET']) #获取单个设备信息
 def get_device(device_id):
     try:
         device = hub.controller.get_device(device_id)
@@ -311,8 +316,7 @@ def get_device(device_id):
         logging.error(f"Error getting device: {e}")
         return jsonify({"error": "An error occurred while getting the device"}), 500
 
-
-@app.route('/devices', methods=['POST'])
+@app.route('/devices', methods=['POST']) #添加设备
 def add_device():
     try:
         data = request.get_json()
@@ -341,7 +345,7 @@ def add_device():
         return jsonify({"error": "An error occurred while adding the device"}), 500
 
 
-@app.route('/devices/<device_id>', methods=['DELETE'])
+@app.route('/devices/<device_id>', methods=['DELETE'])#删除设备
 def remove_device(device_id):
     try:
         hub.controller.remove_device(device_id)
@@ -351,7 +355,7 @@ def remove_device(device_id):
         return jsonify({"error": "An error occurred while removing the device"}), 500
 
 
-@app.route('/devices/<device_id>/<command>', methods=['GET', 'PUT'])
+@app.route('/devices/<device_id>/<command>', methods=['GET', 'PUT']) #执行设备命令
 def execute_command(device_id, command):
     try:
         result = hub.controller.execute_command(device_id, command)
@@ -363,7 +367,7 @@ def execute_command(device_id, command):
         return jsonify({"error": "An error occurred while executing the command"}), 500
 
 
-@app.route('/energy_usage', methods=['GET'])
+@app.route('/energy_usage', methods=['GET']) #获取总能耗
 def get_total_energy_usage():
     try:
         total_energy = hub.total_energy_usage()
