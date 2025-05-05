@@ -1,21 +1,26 @@
+from dotenv import load_dotenv
+import os
 from flask import Flask, jsonify, request, render_template
 from flask_sqlalchemy import SQLAlchemy
 import abc
 import logging
 from collections import OrderedDict
 
-
+# 加载.env文件中的环境变量
+load_dotenv()
 app = Flask(__name__)
 
-# MySQL 数据库配置
-HOSTNAME = "127.0.0.1"
-PORT = 3306
-USERNAME = "root"
-PASSWORD = "123456"
-DATABASE = "device"
+# 从环境变量读取数据库配置
+HOSTNAME = os.getenv('DB_HOST', '127.0.0.1')
+PORT = int(os.getenv('DB_PORT', 3306))
+USERNAME = os.getenv('DB_USER', 'root')
+PASSWORD = os.getenv('DB_PASSWORD', '123456')
+DATABASE = os.getenv('DB_NAME', 'device')
+
 app.config[
     'SQLALCHEMY_DATABASE_URI'] = f"mysql+pymysql://{USERNAME}:{PASSWORD}@{HOSTNAME}:{PORT}/{DATABASE}?charset=utf8mb4"
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
 db = SQLAlchemy(app)
 
 # Base Device Class (Template)
